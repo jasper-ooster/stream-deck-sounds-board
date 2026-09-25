@@ -17,6 +17,9 @@
 - `VBVMR_SetParametersW` mit Skript (`Strip[0].device.wdm="…";Strip[0].B1=1;…`) → `0`, Werte kommen an.
   Gerätezuweisung per `Strip[i].device.wdm` / `Bus[i].device.wdm` mit dem Gerätenamen aus `VBVMR_Input/Output_GetDeviceDescW`.
 - Direkt nach `Login` erst `IsParametersDirty` pollen, sonst liefern `GetParameter*` evtl. alte Werte.
+- **Stolperfalle:** Login während Voicemeeter nicht läuft (`rc=1`) → sobald Voicemeeter startet, funktioniert
+  `GetVoicemeeterType`, aber `SetParameter*` liefert `-1`. Lösung: neu einloggen (Plugin macht das automatisch,
+  sobald der letzte Login nicht `0` war, und bei `-1`/`-2` einmal mit Retry).
 - `Command.Save="<pfad>.xml"` speichert die komplette Konfiguration.
 - Windows-Skripte lassen sich mit dem Node der Stream Deck App ausführen: `npm run vm:inspect` (siehe `scripts/win/`).
 

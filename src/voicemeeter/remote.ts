@@ -46,6 +46,8 @@ export function findDll(log: Log): string | undefined {
 export class RemoteVoicemeeter implements VoicemeeterPlayer {
 	#api: Api | undefined;
 	#loggedIn = false;
+	/** Result of the last VBVMR_Login; 1 means Voicemeeter was not running at that time. */
+	#loginRc: number | undefined;
 
 	constructor(private readonly log: Log) {}
 
@@ -56,8 +58,9 @@ export class RemoteVoicemeeter implements VoicemeeterPlayer {
 		}
 
 		let type = this.#queryType(api);
-		if (type === undefined) {
-			// Voicemeeter may have been started after our login – log in again and retry once.
+		if (type === undefined || this.#loginRc !== 0) {
+			// Voicemeeter was started after our login: reading works then, but setting parameters fails with -1
+			// until we log in again.
 			this.#relogin(api);
 			type = this.#queryType(api);
 		}
@@ -90,7 +93,7 @@ export class RemoteVoicemeeter implements VoicemeeterPlayer {
 	}
 
 	load(file: string): void {
-		const rc = this.#require().setStringW("Recorder.load", file);
+		const rc = this.#call((api) => api.setStringW("Recorder.load", file));
 		this.log(rc === 0 ? "debug" : "error", `SetParameterStringW(Recorder.load, ${file}) -> ${rc}`);
 		if (rc !== 0) {
 			throw new Error(`Recorder.load failed with code ${rc}`);
@@ -110,11 +113,23 @@ export class RemoteVoicemeeter implements VoicemeeterPlayer {
 	}
 
 	#setFloat(name: string, value: number, strict = true): void {
-		const rc = this.#require().setFloat(name, value);
+		const rc = this.#call((api) => api.setFloat(name, value));
 		this.log(rc === 0 ? "debug" : strict ? "error" : "warn", `SetParameterFloat(${name}, ${value}) -> ${rc}`);
 		if (rc !== 0 && strict) {
 			throw new Error(`Setting ${name} failed with code ${rc}`);
 		}
+	}
+
+	/** Runs an API call; on -1 (error) or -2 (no server) logs in again and retries once. */
+	#call(fn: (api: Api) => number): number {
+		const api = this.#require();
+		const rc = fn(api);
+		if (rc !== -1 && rc !== -2) {
+			return rc;
+		}
+		this.log("warn", `API call returned ${rc} – logging in again and retrying`);
+		this.#relogin(api);
+		return fn(api);
 	}
 
 	#require(): Api {
@@ -138,6 +153,7 @@ export class RemoteVoicemeeter implements VoicemeeterPlayer {
 		}
 		const rc = api.login();
 		this.#loggedIn = rc >= 0;
+		this.#loginRc = rc;
 		this.log("debug", `VBVMR_Login (retry) -> ${rc}`);
 	}
 
@@ -164,6 +180,7 @@ export class RemoteVoicemeeter implements VoicemeeterPlayer {
 			// 0 = OK, 1 = OK but Voicemeeter not running, < 0 = error
 			const rc = api.login();
 			this.#loggedIn = rc >= 0;
+			this.#loginRc = rc;
 			this.log("info", `Loaded ${dll}; VBVMR_Login -> ${rc}`);
 			this.#api = api;
 			return api;
