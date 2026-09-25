@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Play Sound – Settings</title>
+<style>
+	/* Look of the Stream Deck property inspector (dark, compact) */
+	body { margin: 0; padding: 8px 12px; background: #2d2d2d; color: #d8d8d8;
+	       font-family: "Segoe UI", sans-serif; font-size: 13px; }
+	.row { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+	.row > label:first-child { min-width: 72px; color: #969696; text-align: right; }
+	input[type=text] { flex: 1; min-width: 0; background: #3d3d3d; color: #d8d8d8; border: 1px solid #555;
+	                   border-radius: 4px; padding: 4px 6px; font-size: 13px; }
+	input[type=range] { flex: 1; }
+	button { background: #3d3d3d; color: #d8d8d8; border: 1px solid #555; border-radius: 4px;
+	         padding: 4px 8px; font-size: 13px; cursor: pointer; }
+	button:hover { background: #4a4a4a; }
+	.value { min-width: 38px; text-align: right; }
+	.status { margin: 4px 0 10px 80px; padding: 6px 8px; border-radius: 4px; background: #3a3a3a; line-height: 1.4; }
+	.status.ok { color: #8fd18f; }
+	.status.error { color: #ff8a80; }
+	.hint { color: #808080; font-size: 11px; margin: 2px 0 0 80px; line-height: 1.4; }
+	a { color: #7fb8ff; cursor: pointer; text-decoration: underline; }
+	details { margin: 12px 0 0 0; }
+	summary { color: #969696; cursor: pointer; margin-left: 80px; }
+	.buses { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+	.buses label { color: #d8d8d8; min-width: 0; text-align: left; }
+</style>
+</head>
+<body>
+	<div id="status" class="status">Checking Voicemeeter…</div>
+
+	<div class="row">
+		<label for="file">File</label>
+		<input type="text" id="file" placeholder="C:\Sounds\applause.mp3" spellcheck="false">
+		<button id="browse" type="button">…</button>
+		<input type="file" id="picker" accept=".mp3,.wav" hidden>
+	</div>
+	<div class="hint">MP3 or WAV. You can also paste the full path.</div>
+
+	<div class="row">
+		<label for="volume">Volume</label>
+		<input type="range" id="volume" min="0" max="100" step="1" value="100">
+		<span id="volumeValue" class="value">100 %</span>
+	</div>
+
+	<details>
+		<summary>Advanced (applies to all keys)</summary>
+		<div class="row">
+			<label>Output to</label>
+			<div class="buses" id="buses">
+				<label><input type="checkbox" value="A1"> A1</label>
+				<label><input type="checkbox" value="A2"> A2</label>
+				<label><input type="checkbox" value="A3"> A3</label>
+				<label><input type="checkbox" value="B1"> B1</label>
+				<label><input type="checkbox" value="B2"> B2</label>
+			</div>
+		</div>
+		<div class="hint">
+			Voicemeeter buses the player is routed to. Default: A1 (your headphones) + B1 (the microphone used in meetings).
+		</div>
+	</details>
+
+<script>
+	const SETUP_URL = "https://github.com/jasper-ooster/stream-deck-sounds-board/blob/main/docs/VOICEMEETER-SETUP.md";
+	const DEFAULT_BUSES = { A1: true, B1: true };
+
+	let websocket = null;
+	let context = null;
+	let actionUUID = null;
+	let settings = {};
+	let globalSettings = {};
+
+	const $ = (id) => document.getElementById(id);
+
+	// Entry point called by the Stream Deck app.
+	function connectElgatoStreamDeckSocket(inPort, inUUID, inRegisterEvent, inInfo, inActionInfo) {
+		context = inUUID;
+		try {
+			const actionInfo = JSON.parse(inActionInfo);
+			actionUUID = actionInfo.action;
+			settings = actionInfo.payload.settings || {};
+		} catch (e) {
+			settings = {};
+		}
+		renderSettings();
+
+		websocket = new WebSocket("ws://127.0.0.1:" + inPort);
+		websocket.onopen = () => {
+			send({ event: inRegisterEvent, uuid: inUUID });
+			send({ event: "getGlobalSettings", context });
+			send({ event: "sendToPlugin", action: actionUUID, context, payload: { type: "getStatus" } });
+		};
+		websocket.onmessage = (msg) => {
+			const data = JSON.parse(msg.data);
+			if (data.event === "didReceiveGlobalSettings") {
+				globalSettings = data.payload.settings || {};
+				renderBuses();
+			} else if (data.event === "didReceiveSettings") {
+				settings = data.payload.settings || {};
+				renderSettings();
+			} else if (data.event === "sendToPropertyInspector" && data.payload && data.payload.type === "status") {
+				renderStatus(data.payload);
+			}
+		};
+	}
+
+	function send(message) {
+		if (websocket && websocket.readyState === WebSocket.OPEN) {
+			websocket.send(JSON.stringify(message));
+		}
+	}
+
+	function saveSettings() {
+		send({ event: "setSettings", context, payload: settings });
+	}
+
+	function renderSettings() {
+		$("file").value = settings.file || "";
+		const volume = settings.volume ?? 100;
+		$("volume").value = volume;
+		$("volumeValue").textContent = volume + " %";
+	}
+
+	function renderBuses() {
+		const buses = globalSettings.buses && Object.values(globalSettings.buses).some(Boolean)
+			? globalSettings.buses
+			: DEFAULT_BUSES;
+		for (const box of document.querySelectorAll("#buses input")) {
+			box.checked = !!buses[box.value];
+		}
+	}
+
+	function renderStatus(payload) {
+		const el = $("status");
+		el.className = "status " + (payload.ok ? "ok" : "error");
+		el.textContent = (payload.ok ? "✔ " : "✖ ") + payload.message + " ";
+		if (!payload.ok) {
+			const link = document.createElement("a");
+			link.textContent = "Setup guide";
+			link.onclick = () => send({ event: "openUrl", payload: { url: SETUP_URL } });
+			el.appendChild(link);
+		}
+	}
+
+	$("file").addEventListener("change", (e) => {
+		settings.file = e.target.value.trim().replace(/^"|"$/g, "");
+		e.target.value = settings.file;
+		saveSettings();
+	});
+
+	$("browse").addEventListener("click", () => $("picker").click());
+
+	$("picker").addEventListener("change", (e) => {
+		if (!e.target.value) return;
+		// Stream Deck reports the full path URL-encoded behind the browser's "fakepath" prefix.
+		settings.file = decodeURIComponent(e.target.value.replace(/^C:\\fakepath\\/, ""));
+		$("file").value = settings.file;
+		saveSettings();
+	});
+
+	$("volume").addEventListener("input", (e) => {
+		$("volumeValue").textContent = e.target.value + " %";
+	});
+	$("volume").addEventListener("change", (e) => {
+		settings.volume = Number(e.target.value);
+		saveSettings();
+	});
+
+	$("buses").addEventListener("change", () => {
+		const buses = {};
+		for (const box of document.querySelectorAll("#buses input")) {
+			buses[box.value] = box.checked;
+		}
+		globalSettings.buses = buses;
+		send({ event: "setGlobalSettings", context, payload: globalSettings });
+		renderBuses();
+	});
+</script>
+</body>
+</html>

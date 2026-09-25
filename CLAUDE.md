@@ -5,8 +5,10 @@ Kopfhörer **und** im Mikrofonkanal, damit Teilnehmer in Videokonferenzen den So
 
 ## Stand
 
-Planungsphase abgeschlossen (Grill-Session vom 2026-09-25). Noch kein Code.
-Nächster Schritt: **API-Spike** – siehe [docs/NEXT-STEPS.md](docs/NEXT-STEPS.md).
+Version 0.1 implementiert (2026-09-25): Play Sound, Stop Sound, Property Inspector, Deploy aus WSL, Packaging.
+Verifiziert: koffi lädt im Stream-Deck-Node 24, DLL wird gefunden, Login funktioniert.
+**Offen:** End-to-End-Test mit laufendem Voicemeeter (Audio, Latenz, `Recorder.Gain`, Umlaute) –
+siehe [docs/NEXT-STEPS.md](docs/NEXT-STEPS.md). Befehle und Aufbau: [README.md](README.md).
 
 ## Dokumente
 
@@ -28,4 +30,7 @@ Nächster Schritt: **API-Spike** – siehe [docs/NEXT-STEPS.md](docs/NEXT-STEPS.
   `*.sdPlugin` wird per Deploy-Skript nach `%APPDATA%\Elgato\StreamDeck\Plugins\` (`/mnt/c/Users/jasper.ooster/AppData/Roaming/...`)
   kopiert und läuft im Node der Stream Deck App. Windows-Befehle nur via Interop (`cmd.exe`, `powershell.exe`).
 - UI-Texte (Aktionsnamen, Property Inspector, Fehlermeldungen) auf **Englisch**; Doku darf Deutsch sein.
+- Nach Änderungen: `npm test && npm run typecheck`, dann `npm run deploy`; Plugin-Log unter
+  `/mnt/c/Users/jasper.ooster/AppData/Roaming/Elgato/StreamDeck/Plugins/de.atacama-blooms.soundboard.sdPlugin/logs/`.
+- TypeScript auf 5.x pinnen – TS 7 (native) bricht `@rollup/plugin-typescript`.
 - Voicemeeter-Zugriff nur über ein schmales Interface, damit die Aktionslogik mit Vitest gegen einen Fake testbar ist.

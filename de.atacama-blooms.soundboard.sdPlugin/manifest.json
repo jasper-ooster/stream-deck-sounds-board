@@ -1,0 +1,58 @@
+{
+	"$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+	"Name": "Soundboard",
+	"Version": "0.1.0.0",
+	"Author": "Atacama Blooms",
+	"Description": "Plays a sound file per key through Voicemeeter Banana/Potato – on your headphones and on your microphone, so meeting participants hear it too.",
+	"UUID": "de.atacama-blooms.soundboard",
+	"Icon": "imgs/plugin/marketplace",
+	"Category": "Soundboard",
+	"CategoryIcon": "imgs/plugin/category-icon",
+	"CodePath": "bin/plugin.js",
+	"SDKVersion": 3,
+	"Software": {
+		"MinimumVersion": "7.1"
+	},
+	"OS": [
+		{
+			"Platform": "windows",
+			"MinimumVersion": "10"
+		}
+	],
+	"Nodejs": {
+		"Version": "24"
+	},
+	"Actions": [
+		{
+			"Name": "Play Sound",
+			"UUID": "de.atacama-blooms.soundboard.play",
+			"Icon": "imgs/actions/play/icon",
+			"Tooltip": "Plays a sound file on your headphones and your microphone (via Voicemeeter). Replaces a sound that is already playing.",
+			"PropertyInspectorPath": "ui/play-sound.html",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/play/key",
+					"TitleAlignment": "bottom"
+				}
+			]
+		},
+		{
+			"Name": "Stop Sound",
+			"UUID": "de.atacama-blooms.soundboard.stop",
+			"Icon": "imgs/actions/stop/icon",
+			"Tooltip": "Stops the sound that is currently playing.",
+			"Controllers": [
+				"Keypad"
+			],
+			"States": [
+				{
+					"Image": "imgs/actions/stop/key",
+					"TitleAlignment": "bottom"
+				}
+			]
+		}
+	]
+}

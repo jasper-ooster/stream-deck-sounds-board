@@ -4,6 +4,16 @@
 > Der Spike ([NEXT-STEPS.md](NEXT-STEPS.md)) soll jeden Punkt bestätigen oder korrigieren.
 > Nach dem Spike diese Datei aktualisieren und die ⚠️-Markierungen entfernen.
 
+## Verifiziert (2026-09-25, Stream Deck 7.5.1, Node 24, koffi 3.3.1)
+
+- `koffi` 3.3.1 lädt im Node 24 der Stream Deck App (Windows-Binary aus `@koromix/koffi-win32-x64`).
+- DLL liegt unter `C:\Program Files (x86)\VB\Voicemeeter\VoicemeeterRemote64.dll`.
+- Prototypen im C-Stil (`long __stdcall VBVMR_Login(void)`, `_Out_ long *`, `const char16_t *`) werden von koffi akzeptiert.
+- Voicemeeter **nicht** gestartet: `VBVMR_Login` → `1`, `VBVMR_GetVoicemeeterType` → `-2`.
+- Logout + erneuter Login dauert ~0,5 s (passiert nur, solange Voicemeeter nicht läuft).
+
+Noch offen: alles rund um den Player (`Recorder.*`) – braucht laufendes Voicemeeter.
+
 Referenz: „VoicemeeterRemoteAPI.pdf“ und `VoicemeeterRemote.h` im Voicemeeter-Installationsordner bzw. im
 Remote-API-Paket auf vb-audio.com.
 

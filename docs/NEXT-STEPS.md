@@ -1,5 +1,31 @@
 # Nächste Schritte
 
+## Stand 2026-09-25
+
+Erledigt: Vorbereitung (0), Grundgerüst, Deploy-Skript, Umsetzung 1–7 (Plugin v0.1, `npm run pack` funktioniert).
+Spike-Punkte 1–3 verifiziert (siehe [VOICEMEETER-API.md](VOICEMEETER-API.md)); statt einer eigenen Spike-Aktion loggt
+`src/voicemeeter/remote.ts` jeden API-Aufruf mit Rückgabecode – das Plugin-Log ist das Spike-Protokoll.
+
+**Als Nächstes – manueller End-to-End-Test** (Voicemeeter Banana muss laufen):
+
+- [ ] Voicemeeter-Setup gemäß [VOICEMEETER-SETUP.md](VOICEMEETER-SETUP.md), Voicemeeter starten.
+- [ ] Play-Sound-Taste anlegen: Statuszeile zeigt „✔ Voicemeeter Banana connected“.
+- [ ] Datei per `…` wählen – landet der echte Pfad im Feld (nicht `C:\fakepath\…`)?
+- [ ] MP3 und WAV abspielen; Sound im Kopfhörer **und** im Teams-Testanruf hörbar?
+- [ ] Log prüfen: Rückgabecodes von `Recorder.Gain`, `Recorder.load`, `Recorder.play` (0 = OK).
+- [ ] Startet `Recorder.load` schon selbst? (Falls doppelt/abgehackt: `play()` nach `load` entfernen.)
+- [ ] Zweite Taste während Wiedergabe → ersetzt? Stop-Taste → stoppt?
+- [ ] Pfad mit Umlauten/Leerzeichen.
+- [ ] Lautstärke 50 % hörbar leiser? Bus-Checkboxen wirken?
+- [ ] Voicemeeter beenden → Warndreieck; wieder starten → Taste funktioniert ohne Plugin-Neustart.
+- [ ] Latenz Tastendruck → Ton subjektiv ok (< ~200 ms)?
+
+Ergebnisse in [VOICEMEETER-API.md](VOICEMEETER-API.md) eintragen.
+
+---
+
+Ursprünglicher Plan (zur Referenz):
+
 ## 0. Vorbereitung (manuell)
 
 - [ ] Unter Windows: Stream Deck App installieren (kein Git, kein Node unter Windows).
