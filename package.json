@@ -10,7 +10,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "validate": "streamdeck validate de.atacama-blooms.soundboard.sdPlugin",
-    "pack": "npm run build && streamdeck pack de.atacama-blooms.soundboard.sdPlugin --output dist --force"
+    "pack": "npm run build && streamdeck pack de.atacama-blooms.soundboard.sdPlugin --output dist --force",
+    "vm:inspect": "node scripts/win/run.mjs scripts/win/vm-inspect.cjs"
   },
   "dependencies": {
     "@elgato/streamdeck": "^2.1.2",

@@ -12,7 +12,15 @@
 - Voicemeeter **nicht** gestartet: `VBVMR_Login` → `1`, `VBVMR_GetVoicemeeterType` → `-2`.
 - Logout + erneuter Login dauert ~0,5 s (passiert nur, solange Voicemeeter nicht läuft).
 
-Noch offen: alles rund um den Player (`Recorder.*`) – braucht laufendes Voicemeeter.
+- Voicemeeter Banana (32-bit `voicemeeterpro.exe`) läuft: `VBVMR_Login` → `0`; die 64-bit-DLL steuert es trotzdem.
+- `Recorder.Gain` existiert (lesbar, Default 0). `Recorder.A1…B2` les- und schreibbar.
+- `VBVMR_SetParametersW` mit Skript (`Strip[0].device.wdm="…";Strip[0].B1=1;…`) → `0`, Werte kommen an.
+  Gerätezuweisung per `Strip[i].device.wdm` / `Bus[i].device.wdm` mit dem Gerätenamen aus `VBVMR_Input/Output_GetDeviceDescW`.
+- Direkt nach `Login` erst `IsParametersDirty` pollen, sonst liefern `GetParameter*` evtl. alte Werte.
+- `Command.Save="<pfad>.xml"` speichert die komplette Konfiguration.
+- Windows-Skripte lassen sich mit dem Node der Stream Deck App ausführen: `npm run vm:inspect` (siehe `scripts/win/`).
+
+Noch offen: Wiedergabe selbst (`Recorder.load`/`play`, Autoplay nach `load`, Latenz, Umlaute) – per Tastendruck testen.
 
 Referenz: „VoicemeeterRemoteAPI.pdf“ und `VoicemeeterRemote.h` im Voicemeeter-Installationsordner bzw. im
 Remote-API-Paket auf vb-audio.com.

@@ -16,8 +16,12 @@ Basis für die spätere README/Setup-Anleitung für Kollegen.
 2. In derselben Spalte nur **B1** aktivieren, **A1** deaktivieren
    (sonst hörst du dich selbst im Kopfhörer).
 3. **A1** (oben rechts, „Hardware Out“): deinen Kopfhörer wählen (WDM-Variante bevorzugen).
-4. Menü → **Run on Windows Startup** aktivieren.
-5. Optional: Menü → **System Tray (Run at Startup)** / „Minimize to tray“.
+4. Optional **Mono** bei Hardware Input 1 aktivieren – wichtig bei Audio-Interfaces (z. B. Focusrite), wo das Mikro
+   nur an Eingang 1 hängt und sonst nur links ankommt.
+5. Bei den virtuellen Eingängen (**Voicemeeter Input**, **Voicemeeter AUX**) **B1 deaktivieren** – sonst landet
+   Systemsound, der über Voicemeeter läuft, im Meeting-Mikrofon.
+6. Menü → **Run on Windows Startup** aktivieren.
+7. Optional: Menü → **System Tray (Run at Startup)** / „Minimize to tray“.
 
 Den eingebauten Player routet das Plugin selbst (Standard: A1 + B1) – dort nichts einstellen.
 
@@ -34,6 +38,10 @@ Gilt für Teams, Zoom, Webex, Discord usw.
 
 1. In Teams „Testanruf“ bzw. in Zoom „Mikrofon testen“ starten → deine Stimme muss zu hören sein.
 2. Später mit Plugin: Sound-Taste drücken → du hörst ihn im Kopfhörer, und in der Testaufnahme ist er ebenfalls drauf.
+
+## Kontrolle
+
+Aus WSL (Entwickler): `npm run vm:inspect` listet Geräte und aktuelles Routing.
 
 ## Wenn Kopfhörer oder Mikro auf anderen Bussen liegen
 
