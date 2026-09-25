@@ -102,13 +102,20 @@ damit man später nachvollziehen kann, *warum* etwas so ist.
   plus Link zur Setup-Anleitung.
 - **Verworfen:** Nur README; Setup-Assistent, der Voicemeeter automatisch konfiguriert (aufwendig, greift ungefragt ein).
 
-## D15 – Entwicklung komplett unter Windows
+## D15 – Entwicklung in WSL, Deploy nach Windows (revidiert 2026-09-25)
 
-- **Entscheidung:** Repo auf dem Windows-Dateisystem (z. B. `C:\dev\stream-deck-sounds-board`), Node.js + Stream Deck CLI
-  unter Windows, VS Code nativ unter Windows (nicht Remote-WSL).
-- **Warum:** Plugin lädt eine Windows-DLL und wird von der Windows-Stream-Deck-App gestartet; `streamdeck link` und
-  Watch-Mode funktionieren so direkt.
-- **Verworfen:** Code in WSL + Sync nach Windows; WSL + `/mnt/c` mit Windows-Node.
+- **Entscheidung:** Repo, Git, Node, npm, Build (Rollup) und Tests (Vitest) laufen in **WSL**
+  (`/home/jasper/projects/stream-deck-sounds-board`). Ein Watch-/Deploy-Skript kopiert den gebauten
+  `*.sdPlugin`-Ordner nach `/mnt/c/Users/jasper.ooster/AppData/Roaming/Elgato/StreamDeck/Plugins/` und stößt per
+  Windows-Interop (`cmd.exe` / `powershell.exe`) einen Neustart des Plugins bzw. der Stream Deck App an.
+- **Warum:** Unter Windows soll weder Git noch Node installiert werden. Das Plugin ist nach dem Bundling reines JS;
+  `koffi` liefert vorkompilierte Binaries für alle Plattformen (inkl. `win32_x64`) im npm-Paket mit. Ausgeführt wird es
+  vom mitgelieferten Node der Stream Deck App.
+- **Kein Symlink/`streamdeck link`:** Die Windows-App soll nicht aus `\\wsl$\...` laden (unzuverlässig, WSL muss laufen) –
+  stattdessen echte Kopie auf `C:`.
+- **Zu verifizieren:** Wie das Plugin von WSL aus am saubersten neu gestartet wird
+  (Deep-Link `streamdeck://…`, oder Stream Deck App per PowerShell neu starten). `streamdeck pack` sollte in WSL laufen.
+- **Ursprünglich entschieden, dann verworfen:** Entwicklung komplett unter Windows (erfordert Git + Node unter Windows).
 
 ## D16 – Tests: Unit-Tests gegen Fake
 
@@ -119,5 +126,6 @@ damit man später nachvollziehen kann, *warum* etwas so ist.
 
 ## D17 – Vorgehen: Spike zuerst
 
-- **Entscheidung:** Bevor gescaffoldet wird, klärt ein kleines Node-Skript unter Windows die Unsicherheiten der Remote API.
+- **Entscheidung:** Bevor die eigentlichen Aktionen gebaut werden, klärt ein **Mini-Plugin** (läuft im Node der Stream Deck App,
+  Logs per `/mnt/c/...` aus WSL lesbar) die Unsicherheiten der Remote API. Kein eigenständiges Skript, weil unter Windows kein Node installiert wird.
   Details: [NEXT-STEPS.md](NEXT-STEPS.md).
