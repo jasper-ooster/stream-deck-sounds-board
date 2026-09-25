@@ -15,7 +15,8 @@ Basis für die spätere README/Setup-Anleitung für Kollegen.
    (WDM-Variante bevorzugen).
 2. In derselben Spalte nur **B1** aktivieren, **A1** deaktivieren
    (sonst hörst du dich selbst im Kopfhörer).
-3. **A1** (oben rechts, „Hardware Out“): deinen Kopfhörer wählen (WDM-Variante bevorzugen).
+3. **A1** (oben rechts, „Hardware Out“): deinen Kopfhörer wählen – **MME-Variante**, wenn andere Programme (Spotify, Teams)
+   weiter direkt auf dieses Gerät ausgeben sollen. Mit WDM belegt Voicemeeter das Gerät exklusiv, dann ist dort sonst alles stumm.
 4. Optional **Mono** bei Hardware Input 1 aktivieren – wichtig bei Audio-Interfaces (z. B. Focusrite), wo das Mikro
    nur an Eingang 1 hängt und sonst nur links ankommt.
 5. Bei den virtuellen Eingängen (**Voicemeeter Input**, **Voicemeeter AUX**) **B1 deaktivieren** – sonst landet
@@ -52,5 +53,7 @@ Das Plugin routet standardmäßig auf **A1** (Kopfhörer) und **B1** (Konferenz-
 
 - **Meeting hört mich nicht:** Konferenz-App nutzt nicht „Voicemeeter Out B1“, oder B1 ist bei Hardware Input 1 nicht aktiv.
 - **Ich höre mich selbst:** A1 bei Hardware Input 1 deaktivieren.
-- **Knacksen/Aussetzer:** Menü → System Settings → Buffering WDM erhöhen (z. B. 512); A1 auf WDM statt MME.
+- **Kein Ton mehr in anderen Programmen (Spotify, Teams …):** A1 steht auf WDM/KS und blockiert das Gerät → auf MME umstellen,
+  betroffene Programme neu starten.
+- **Knacksen/Aussetzer:** Menü → System Settings → Buffering erhöhen (z. B. 512).
 - **Taste zeigt Warndreieck:** Voicemeeter läuft nicht, ist die Standard-Version oder die Sounddatei wurde verschoben.

@@ -9,10 +9,10 @@ Spike-Punkte 1–3 verifiziert (siehe [VOICEMEETER-API.md](VOICEMEETER-API.md));
 **Als Nächstes – manueller End-to-End-Test** (Voicemeeter Banana muss laufen):
 
 - [x] Voicemeeter-Setup (2026-09-25 per Remote API): Hardware Input 1 = Focusrite „Analogue 1 + 2“ (Mono, nur B1),
-      A1 = „Lautsprecher (Focusrite USB Audio)“, virtuelle Eingänge nur A1, Player A1+B1.
+      A1 = „Lautsprecher (Focusrite USB Audio)“ (erst WDM → blockierte alle anderen Apps, jetzt **MME**), virtuelle Eingänge nur A1, Player A1+B1.
       Autostart: `HKCU\…\Run` → „Voicemeeter Banana“. Backup: `Documents\Voicemeeter\soundboard-setup.xml`.
 - [ ] Teams: Mikrofon = „Voicemeeter Out B1 (VB-Audio Voicemeeter VAIO)“, Lautsprecher = Focusrite.
-- [ ] Prüfen, dass andere Apps weiterhin über den Focusrite ausgeben können, obwohl Voicemeeter A1 per WDM belegt.
+- [ ] Prüfen, dass andere Apps (Spotify) mit A1 auf MME wieder über den Focusrite ausgeben.
 - [ ] Play-Sound-Taste anlegen: Statuszeile zeigt „✔ Voicemeeter Banana connected“.
 - [ ] Datei per `…` wählen – landet der echte Pfad im Feld (nicht `C:\fakepath\…`)?
 - [ ] MP3 und WAV abspielen; Sound im Kopfhörer **und** im Teams-Testanruf hörbar?
