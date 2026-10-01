@@ -8,7 +8,9 @@ Technisch nutzt das Plugin den eingebauten Player von **Voicemeeter Banana** (od
 ## Installation
 
 1. **Voicemeeter Banana** installieren und einrichten → [docs/VOICEMEETER-SETUP.md](docs/VOICEMEETER-SETUP.md)
-2. `de.atacama-blooms.soundboard.streamDeckPlugin` doppelklicken → Stream Deck installiert das Plugin.
+2. `de.atacama-blooms.soundboard.streamDeckPlugin` aus dem neuesten
+   [Release](https://github.com/jasper-ooster/stream-deck-sounds-board/releases/latest) herunterladen und doppelklicken
+   → Stream Deck installiert das Plugin.
 3. In der Stream Deck App unter **Soundboard** die Aktionen auf Tasten ziehen.
 
 ## Benutzung
@@ -49,6 +51,10 @@ npm run deploy      # bauen, nach %APPDATA%\Elgato\StreamDeck\Plugins kopieren, 
 npm run watch       # wie deploy, bei jeder Änderung
 npm run pack        # dist/de.atacama-blooms.soundboard.streamDeckPlugin zum Weitergeben
 ```
+
+Release: Version in `manifest.json` erhöhen, `npm run pack`, dann
+`gh release create vX.Y.Z dist/de.atacama-blooms.soundboard.streamDeckPlugin --target main`.
+Die gebaute Datei wird **nicht** committet (`dist/` ist ignoriert).
 
 Aufbau:
 

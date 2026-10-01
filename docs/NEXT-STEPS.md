@@ -92,4 +92,4 @@ oder der Player sich nicht zuverlässig steuern lässt → D3 neu bewerten; Fall
 - **Neustart aus WSL:** Wie startet das Deploy-Skript das Plugin neu, ohne Windows-CLI? (Deep-Link vs. App-Neustart per PowerShell)
 - **Gain-Semantik:** Slider in dB oder 0–100 %? Vorschlag: 0–100 % im UI, intern auf dB abbilden.
 - **Plugin-UUID / Name** noch nicht festgelegt.
-- **Verteilung an Kollegen:** Ablageort der `.streamDeckPlugin`-Datei (Teams-Kanal, GitHub Release …) noch offen.
+- **Verteilung an Kollegen:** ~~offen~~ → GitHub Releases (v0.1.0 am 2026-10-01).
